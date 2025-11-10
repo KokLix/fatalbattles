@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FatalBattles - Vercel Edition</title>
+    <meta name="description" content="Daily Reward System powered by Vercel">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Overlay -->
+        <div class="auth-overlay" id="authOverlay">
+            <div class="auth-container">
+                <div class="vercel-badge">▲ VERCEL</div>
+                
+                <div class="auth-form" id="loginForm">
+                    <div class="app-icon">⚔️</div>
+                    <h1>FatalBattles</h1>
+                    <p class="app-subtitle">Vercel Powered Edition</p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="loginUsername" placeholder="Имя пользователя" class="auth-input">
+                        <input type="password" id="loginPassword" placeholder="Пароль" class="auth-input">
+                    </div>
+                    
+                    <button class="auth-button primary" id="loginBtn">
+                        <span class="btn-text">Войти в систему</span>
+                        <span class="btn-loader">🔄</span>
+                    </button>
+                    
+                    <p class="auth-switch">
+                        Нет аккаунта? 
+                        <span id="showRegisterBtn">Создать новый</span>
+                    </p>
+                </div>
+                
+                <div class="auth-form" id="registerForm" style="display: none;">
+                    <div class="app-icon">🎮</div>
+                    <h1>Регистрация</h1>
+                    
+                    <div class="input-group">
+                        <input type="text" id="registerUsername" placeholder="Придумайте имя" class="auth-input">
+                        <input type="password" id="registerPassword" placeholder="Пароль" class="auth-input">
+                        <input type="password" id="confirmPassword" placeholder="Повторите пароль" class="auth-input">
+                    </div>
+                    
+                    <button class="auth-button primary" id="registerBtn">
+                        <span class="btn-text">Создать аккаунт</span>
+                        <span class="btn-loader">🔄</span>
+                    </button>
+                    
+                    <p class="auth-switch">
+                        Уже есть аккаунт? 
+                        <span id="showLoginBtn">Войти</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div class="app-container" id="mainApp" style="display: none;">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-content">
+                    <div class="brand">
+                        <div class="logo">FATALBATTLES</div>
+                        <div class="platform-badge">▲ Vercel</div>
+                    </div>
+                    
+                    <div class="user-widget">
+                        <span class="user-greeting" id="userWelcome">Воин</span>
+                        <div class="user-balance">
+                            <span class="balance-amount" id="userBalance">0</span>
+                            <span class="balance-currency">FC</span>
+                        </div>
+                        <button class="logout-btn" id="logoutBtn" title="Выйти">
+                            <span>🚪</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="status-bar">
+                    <div class="status-item online">
+                        <div class="status-indicator"></div>
+                        <span>Система активна</span>
+                    </div>
+                    <div class="status-item online">
+                        <div class="status-indicator"></div>
+                        <span>Vercel Edge</span>
+                    </div>
+                    <div class="status-item" id="apiStatus">
+                        <div class="status-indicator"></div>
+                        <span>Work.Ink API</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard -->
+            <main class="dashboard">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-trend up">+12%</div>
+                        </div>
+                        <div class="stat-value" id="userBalance">0</div>
+                        <div class="stat-label">FatalCoin Баланс</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-trend up">+5%</div>
+                        </div>
+                        <div class="stat-value" id="keysClaimed">0</div>
+                        <div class="stat-label">Ключей получено</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">🔄</div>
+                            <div class="stat-trend neutral">0%</div>
+                        </div>
+                        <div class="stat-value" id="linksUpdate">Сегодня</div>
+                        <div class="stat-label">Обновление ссылок</div>
+                    </div>
+                </div>
+
+                <!-- Mission System -->
+                <div class="mission-panel">
+                    <div class="panel-header">
+                        <h2>🎯 ЕЖЕДНЕВНАЯ МИССИЯ</h2>
+                        <p>Выполните 3 шага для получения 100 FatalCoin</p>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="progress-section">
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        
+                        <div class="steps-indicator">
+                            <div class="step-marker active" data-step="1">
+                                <div class="marker-dot"></div>
+                                <span>Миссия 1</span>
+                            </div>
+                            <div class="step-marker" data-step="2">
+                                <div class="marker-dot"></div>
+                                <span>Миссия 2</span>
+                            </div>
+                            <div class="step-marker" data-step="3">
+                                <div class="marker-dot"></div>
+                                <span>Миссия 3</span>
+                            </div>
+                            <div class="step-marker reward" data-step="4">
+                                <div class="marker-dot">🎁</div>
+                                <span>Награда</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step Content -->
+                    <div class="step-content active" data-step="1">
+                        <div class="step-header">
+                            <h3>🔗 Шаг 1: Активация системы</h3>
+                            <div class="step-badge">Активно</div>
+                        </div>
+                        <p>Перейдите по ссылке ниже для активации первого этапа миссии</p>
+                        
+                        <div class="action-grid">
+                            <a class="action-btn outline" id="step1Btn" target="_blank" style="display: none;">
+                                <span class="btn-icon">🔗</span>
+                                Открыть миссию 1
+                            </a>
+                            <button class="action-btn primary" id="completeStep1Btn" disabled>
+                                <span class="btn-icon">⏳</span>
+                                <span class="btn-text">Инициализация...</span>
+                            </button>
+                        </div>
+                        
+                        <div class="step-status warning" id="step1Status">
+                            Загрузка миссии через Work.Ink API...
+                        </div>
+                    </div>
+
+                    <div class="step-content" data-step="2">
+                        <div class="step-header">
+                            <h3>🔗 Шаг 2: Второй этап</h3>
+                            <div class="step-badge">Ожидание</div>
+                        </div>
+                        <p>Продолжаем миссию - перейдите по второй ссылке</p>
+                        
+                        <div class="action-grid">
+                            <a class="action-btn outline" id="step2Btn" target="_blank" style="display: none;">
+                                <span class="btn-icon">🔗</span>
+                                Открыть миссию 2
+                            </a>
+                            <button class="action-btn primary" id="completeStep2Btn" disabled>
+                                <span class="btn-icon">⏳</span>
+                                <span class="btn-text">Ожидание этапа 1...</span>
+                            </button>
+                        </div>
+                        
+                        <div class="step-status info" id="step2Status">
+                            Сначала завершите первый этап
+                        </div>
+                    </div>
+
+                    <div class="step-content" data-step="3">
+                        <div class="step-header">
+                            <h3>🔗 Шаг 3: Финальный этап</h3>
+                            <div class="step-badge">Ожидание</div>
+                        </div>
+                        <p>Последний шаг к награде</p>
+                        
+                        <div class="action-grid">
+                            <a class="action-btn outline" id="step3Btn" target="_blank" style="display: none;">
+                                <span class="btn-icon">🔗</span>
+                                Открыть миссию 3
+                            </a>
+                            <button class="action-btn primary" id="completeStep3Btn" disabled>
+                                <span class="btn-icon">⏳</span>
+                                <span class="btn-text">Ожидание этапа 2...</span>
+                            </button>
+                        </div>
+                        
+                        <div class="step-status info" id="step3Status">
+                            Завершите предыдущие этапы
+                        </div>
+                    </div>
+
+                    <div class="step-content reward" data-step="4">
+                        <div class="reward-header">
+                            <div class="reward-icon">🎉</div>
+                            <h3>МИССИЯ ВЫПОЛНЕНА!</h3>
+                            <div class="reward-amount">+100 FatalCoin</div>
+                        </div>
+                        
+                        <div class="reward-card">
+                            <div class="key-section">
+                                <label>Ваш ежедневный ключ:</label>
+                                <div class="key-display" id="finalKey">XXXX-XXXX-XXXX-XXXX</div>
+                            </div>
+                            
+                            <div class="reward-status success" id="rewardStatus">
+                                Готово к получению награды!
+                            </div>
+
+                            <button class="reward-claim-btn" id="claimRewardBtn">
+                                <span class="btn-icon">🎯</span>
+                                ПОЛУЧИТЬ 100 FATALCOIN
+                            </button>
+                        </div>
+                        
+                        <div class="cooldown-widget">
+                            <div class="cooldown-label">Следующая миссия через:</div>
+                            <div class="cooldown-timer" id="cooldownTimer">24:00:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <footer class="system-info">
+                    <div class="info-card">
+                        <div class="info-header">
+                            <h4>🚀 FatalBattles System</h4>
+                            <div class="vercel-powered">
+                                <span>▲ Powered by Vercel</span>
+                            </div>
+                        </div>
+                        <p>Автоматическое обновление миссий каждые 24 часа</p>
+                        <div class="domain-card">
+                            <code>fatalbattles.vercel.app</code>
+                        </div>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-icon">⚡</span>
+                                <span>Edge Network</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔒</span>
+                                <span>SSL Encryption</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🚀</span>
+                                <span>Instant Deploy</span>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
